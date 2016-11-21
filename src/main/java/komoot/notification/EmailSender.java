@@ -58,7 +58,7 @@ public class EmailSender {
                 .append("\n\n");
         for (NotificationEntity notification : notifications) {
             textBuilder.append(capilalize(formatter.format(notification.getTimestamp())))
-                    .append("\t\t" + notification.getMessage());
+                    .append("\t\t" + notification.getMessage()).append("\n");
         }
         return textBuilder.toString();
     }
