@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 
 public interface NotificationDAO extends JpaRepository<NotificationEntity, Long>{
@@ -13,7 +15,7 @@ public interface NotificationDAO extends JpaRepository<NotificationEntity, Long>
     List<NotificationEntity> findByStatusOrderByOwnerIdAsc(NotificationEntity.Status status);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE NotificationEntity n set n.status =:status WHERE n.id =:id")
-    int updateStatus(@Param("status") NotificationEntity.Status status, @Param("id") long id);
+    @Query("UPDATE NotificationEntity n set n.status =:status, n.statusDate =:date WHERE n.id in :ids")
+    int updateStatus(@Param("status") NotificationEntity.Status status, @Param("date")  Date date, @Param("ids") Set<Long> ids);
 
 }

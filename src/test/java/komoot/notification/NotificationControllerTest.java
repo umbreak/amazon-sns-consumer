@@ -5,6 +5,7 @@ import komoot.notification.jpa.NotificationEntity;
 import komoot.notification.jpa.SubscriberDAO;
 import komoot.notification.jpa.SubscriberEntity;
 import komoot.notification.model.Notification;
+import komoot.notification.rest.cron.schedule.NotificationSummaryCron;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +24,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,6 +59,9 @@ public class NotificationControllerTest {
     private NotificationDAO notificationDAO;
 
     @Autowired
+    private NotificationSummaryCron notificationSummaryCron;
+
+    @Autowired
     private SubscriberDAO subscriberDAO;
 
     @Autowired
@@ -76,19 +78,63 @@ public class NotificationControllerTest {
     @Test
     @Transactional
     public void testPostNotification() throws Exception {
-        String email = "aaa@example.com";
-        String name = "Didac";
-        String message = "This is a message sent by Merkel";
-        Notification notification = new Notification(email, name, message);
+        Notification notification = new Notification("aaa@example.com", "Didac", "This is a message sent by Merkel");
+        sendNotification(notification);
+        checkDBConsistency(notification);
+    }
 
-        System.out.println(json(notification));
+    @Test
+    @Transactional
+    public void testPostNotifications() throws Exception {
+        List<Notification> notifications = Arrays.asList(
+                new Notification("aaa@example.com", "Didac", "Hey, do you fanc partying tonight"),
+                new Notification("aaa@example.com", "Didac", "YOLO!"),
+                new Notification("bbb@example.com", "Mike", "I would like to have a beer"),
+                new Notification("ccc@example.com", "Stephan", "No beer before 4 8english version sucks)"),
+                new Notification("aaa@example.com", "Didac", "End of sadness == end of winter")
+        );
+        for (Notification notification : notifications) {
+            sendNotification(notification);
+            checkDBConsistency(notification);
+        }
+        Assert.assertEquals(3, subscriberDAO.count());
+        Assert.assertEquals(notifications.size(), notificationDAO.count());
+    }
+
+    @Test
+    @Transactional
+    public void testPostNotificationsAndSendEmail() throws Exception {
+        Date init = new Date();
+        testPostNotifications();
+        notificationSummaryCron.subscriptionTaskChecker();
+
+        //Check that now all the status have been changed to sent
+        Map<Long, Date> sentDate=new HashMap<>();
+        Date now = new Date();
+        notificationDAO.findAll().stream().forEach(notification -> {
+                Assert.assertEquals(NotificationEntity.Status.SENT, notification.getStatus());
+                Assert.assertTrue(notification.getStatusDate().after(init) && notification.getStatusDate().before(now));
+                sentDate.put(notification.getId(), notification.getStatusDate());
+            }
+        );
+
+        Thread.sleep(1000);
+        notificationSummaryCron.subscriptionTaskChecker();
+
+        //Check that the emails have not been sent again
+        notificationDAO.findAll().stream().forEach(notification -> {
+                Assert.assertEquals(NotificationEntity.Status.SENT, notification.getStatus());
+                Assert.assertEquals(sentDate.get(notification.getId()), notification.getStatusDate());
+            }
+        );
+    }
+
+    private void sendNotification(Notification notification) throws Exception {
         mockMvc.perform(post("/notification")
                 .header("x-amz-sns-message-type", "Notification")
                 .contentType(contentType)
                 .content(json(notification)).with(user("user1").password("secret1")))
                 .andExpect(status().isOk());
-
-        checkDBConsistency(notification);
     }
 
     @Test
@@ -121,10 +167,11 @@ public class NotificationControllerTest {
 
     private void checkDBNotification(Notification notification, SubscriberEntity subscriptor){
         List<NotificationEntity> listNotification = notificationDAO.findByStatusAndOwnerEmail(NotificationEntity.Status.NOT_SENT, notification.getEmail());
-        Assert.assertEquals(1, listNotification.size());
-        NotificationEntity entity = listNotification.get(0);
-        Assert.assertEquals(notification.getMessage(), entity.getMessage());
-        Assert.assertEquals(subscriptor.getId(), entity.getOwner().getId());
+        Optional<NotificationEntity> dbNotificationOption = listNotification.stream().filter(not -> not.getMessage().equals(notification.getMessage())).findFirst();
+        Assert.assertTrue(dbNotificationOption.isPresent());
+        NotificationEntity dbNotification = dbNotificationOption.get();
+        Assert.assertEquals(notification.getMessage(), dbNotification.getMessage());
+        Assert.assertEquals(subscriptor.getId(), dbNotification.getOwner().getId());
     }
 
     private SubscriberEntity checkBDSubscription(Notification notification){

@@ -13,7 +13,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.internet.AddressException;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -30,8 +33,8 @@ public class NotificationSummaryCron {
         this.mailSender = mailSender;
     }
 
-
-    @Scheduled(initialDelay = 0,fixedRateString = "${scheduler.email}")
+    //Starts after 60sec and run every scheduler.email (specified in properties file
+    @Scheduled(initialDelay = 60000,fixedRateString = "${scheduler.email}")
     @Transactional
     public void subscriptionTaskChecker(){
         logger.info("Start checking subcriptions");
@@ -64,9 +67,7 @@ public class NotificationSummaryCron {
     }
 
     private void updateNotificationsStatus(List<NotificationEntity> notifications){
-        for (NotificationEntity notification : notifications) {
-            notification.setStatus(NotificationEntity.Status.SENT);
-            notificationDAO.updateStatus(notification.getStatus(), notification.getId());
-        }
+        Set<Long> mapIDs = notifications.stream().map(notification -> notification.getId()).collect(Collectors.toSet());
+        notificationDAO.updateStatus(NotificationEntity.Status.SENT, new Date(), mapIDs);
     }
 }

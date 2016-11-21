@@ -6,6 +6,9 @@ import komoot.notification.jpa.SubscriberDAO;
 import komoot.notification.jpa.SubscriberEntity;
 import komoot.notification.model.ErrorResponse;
 import komoot.notification.model.Notification;
+import komoot.notification.rest.cron.schedule.NotificationSummaryCron;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,9 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/notification")
 public class NotificationController {
+
+    private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
+
 
     private final SubscriberSession subscriberSession;
     private final NotificationSession notificationSession;
@@ -50,6 +56,7 @@ public class NotificationController {
         try {
             return mapper.readValue(message, Notification.class);
         } catch (IOException e) {
+            logger.error("Error unmarskalling message: " + message, e);
             throw new NotificationException( "Error unmarskalling message: " + message, ErrorResponse.Error.UNMARSHALLING);
         }
     }

@@ -24,6 +24,8 @@ public class NotificationEntity {
 
     Status status;
 
+    Date statusDate;
+
     public NotificationEntity() {}
 
     public NotificationEntity(Notification notification, SubscriberEntity subscriber){
@@ -31,6 +33,7 @@ public class NotificationEntity {
         timestamp = notification.getTimestamp();
         owner = subscriber;
         status = Status.NOT_SENT;
+        statusDate = new Date();
     }
 
     public enum Status{
