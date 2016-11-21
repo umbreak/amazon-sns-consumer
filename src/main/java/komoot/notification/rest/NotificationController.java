@@ -41,6 +41,7 @@ public class NotificationController {
             @RequestHeader(value="x-amz-sns-message-type") String messageType,
             @RequestBody String message) {
 
+        logger.info("Message type==" + messageType);
         //Ignore not notification messages
         if(!Objects.equals(messageType, "Notification")) return ResponseEntity.ok(null);
 
