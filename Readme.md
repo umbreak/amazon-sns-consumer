@@ -19,7 +19,7 @@ mvn spring-boot:run
 The Webservice is running on a micro AMI from Amazon EC2. You can test emulating an SNS message as as follows:
 
 ```bash
-curl -v -u "user1:secret1" -H "x-amz-sns-message-type: Notification" -H "Content-type: text/plain" -X POST -d '{"email":"aaa@example.com","name":"Didac","message":"This is a message sent by Merkel","timestamp":"2016-11-21T00:07:40"}' "http://localhost:8080/notification"
+curl -v -u "user1:secret1" -H "x-amz-sns-message-type: Notification" -H "Content-type: text/plain" -X POST -d '{"email":"aaa@example.com","name":"Didac","message":"This is a message sent by Merkel","timestamp":"2016-11-21T00:07:40"}' "http://54.201.95.75/notification"
 ```
 
 #DB

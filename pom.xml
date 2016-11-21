@@ -93,7 +93,7 @@
                 <version>0.4.11</version>
                 <configuration>
                     <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                    <dockerDirectory>src/main/resources</dockerDirectory>
+                    <dockerDirectory>${project.basedir}/src/main/resources</dockerDirectory>
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
