@@ -23,16 +23,13 @@ public class Notification extends BaseSNS{
 
     private String name;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Europe/Berlin")
-    private Date timestamp;
-
     public Notification() {}
 
     public Notification(String email, String name, String message) {
         this.email = email;
         this.name = name;
         this.message = message;
-        this.timestamp = new Date();
+        this.setTimestamp(new Date());
         this.setSignatureVersion("1");
     }
 

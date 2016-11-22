@@ -43,9 +43,10 @@ public class NotificationController {
             @RequestHeader(value="x-amz-sns-message-type") String messageType,
             @RequestBody String message) {
 
+        logger.info("Message type==" + messageType + " message==" + message);
+
         BaseSNS snsMessage = deserializer.getGenericSNSMessage(message, messageType);
 
-        logger.info("Message type==" + messageType + " message==" + snsMessage);
 
         checkValidMessage(snsMessage);
 
@@ -81,6 +82,8 @@ public class NotificationController {
 
     private void handleSunscription(BaseSNS message){
         SubscriptionConfirmation subscription = (SubscriptionConfirmation)message;
+        logger.info("message==" + subscription);
+
         try {
             NotificationUtils.getStringFromUrl(subscription.getSubscribeURL());
         } catch (IOException e) {
@@ -92,6 +95,8 @@ public class NotificationController {
 
     private void handleNotification(BaseSNS message){
         Notification notification = (Notification)message;
+        logger.info("message==" + notification);
+
         SubscriberEntity subscriber = subscriberSession.createOrGetSubscriber(notification);
         notificationSession.storeNotificationForSubscriber(notification, subscriber);
     }
