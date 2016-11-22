@@ -1,6 +1,7 @@
 package komoot.notification.model.sns;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.ToString;
 
@@ -9,15 +10,34 @@ import java.util.Date;
 @Data
 @ToString
 public class SubscriptionConfirmation {
-    private String Type;
-    private String MessageId;
-    private String Token;
-    private String TopicArn;
-    private String Message;
-    private String SubscribeURL;
+
+    @JsonProperty("SigningCertURL")
+    private String signingCertURL;
+
+    @JsonProperty("MessageId")
+    private String messageId;
+
+    @JsonProperty("Message")
+    private String message;
+
+    @JsonProperty("Type")
+    private String type;
+
+    @JsonProperty("Token")
+    private String token;
+
+    @JsonProperty("SignatureVersion")
+    private String signatureVersion;
+
+    @JsonProperty("SubscribeURL")
+    private String subscribeURL;
+
+    @JsonProperty("Signature")
+    private String signature;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Europe/Berlin")
     private Date Timestamp;
-    private String SignatureVersion;
-    private String Signature;
-    private String SigningCertURL;
+
+    @JsonProperty("TopicArn")
+    private String topicArn;
 }

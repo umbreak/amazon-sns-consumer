@@ -10,7 +10,6 @@ import java.net.URLConnection;
 
 public class URLUtils {
     public static String getStringFromUrl(String urlString) throws IOException {
-        System.out.println("Getting url==" + urlString);
         URL url = new URL(urlString);
         URLConnection con = url.openConnection();
         InputStream in = con.getInputStream();

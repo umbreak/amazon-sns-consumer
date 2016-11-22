@@ -53,7 +53,6 @@ public class NotificationController {
 
     private void handleSunscription(String message){
         SubscriptionConfirmation subscription = deserializer.getSubscriptionFromString(message);
-        logger.info("subscription==" + subscription);
         try {
             URLUtils.getStringFromUrl(subscription.getSubscribeURL());
         } catch (IOException e) {
