@@ -4,6 +4,7 @@ import komoot.notification.jpa.NotificationDAO;
 import komoot.notification.jpa.NotificationEntity;
 import komoot.notification.jpa.SubscriberDAO;
 import komoot.notification.jpa.SubscriberEntity;
+import komoot.notification.model.sns.BaseSNS;
 import komoot.notification.model.sns.Notification;
 import komoot.notification.model.sns.SubscriptionConfirmation;
 import komoot.notification.rest.SNSMessageDeserializer;
@@ -136,8 +137,9 @@ public class NotificationControllerTest {
     @Test
     public void deserializeSubscription(){
         String jsonSubscription="{ \"Type\" : \"SubscriptionConfirmation\", \"MessageId\" : \"bf1e7813-2dda-4de1-8a03-c5d9ab9633e6\", \"Token\" : \"2336412f37fb687f5d51e6e241d44a2dc0dc1be77f70e0f7808517b9078d0de38fe0df916b101b6373c920912128b416703290f03cef4e206858e3edf52ca829cef08bf4d451ca8b88df3bd322ac73eebbddf5fbdc65b4640fdb8ddb82b4fed72bbf9d16da43b361ab801ac56fce011c5aa5d663359f53baff7242adf26087ceec7e999e7fd4cda7548b75e7c992b555\", \"TopicArn\" : \"arn:aws:sns:eu-west-1:374647430309:komoot-challenge-notifications\", \"Message\" : \"You have chosen to subscribe to the topic arn:aws:sns:eu-west-1:374647430309:komoot-challenge-notifications.\\nTo confirm the subscription, visit the SubscribeURL included in this message.\", \"SubscribeURL\" : \"https://sns.eu-west-1.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:eu-west-1:374647430309:komoot-challenge-notifications&Token=2336412f37fb687f5d51e6e241d44a2dc0dc1be77f70e0f7808517b9078d0de38fe0df916b101b6373c920912128b416703290f03cef4e206858e3edf52ca829cef08bf4d451ca8b88df3bd322ac73eebbddf5fbdc65b4640fdb8ddb82b4fed72bbf9d16da43b361ab801ac56fce011c5aa5d663359f53baff7242adf26087ceec7e999e7fd4cda7548b75e7c992b555\", \"Timestamp\" : \"2016-11-22T20:11:44.050Z\", \"SignatureVersion\" : \"1\", \"Signature\" : \"RwCmkPvlKP6Ceh2VdrZXUiMNhQSLd8asj7WuEnoCchP7pPCzT9FXh0/z/NNXXkcGB4LXOXDRa2gTBqUQWWQdZ+rQXrUX53pi9a29okoGmhTQL9dAyILwGrfsrhUAqvh86J37PRt/bFZT4lq7oIG+ag6SYvVvZ0TEn5JQK921OCr2onDJOQ9eLlJVAP/dmA2c0UFWj1DGh5gtvcXLi8poh0zRvlCQNpVw7yn/xEvITF5iHwORARTsT2ZSIw6PbqE4fRPROEP/TjOUusAHp+pMbvHFHbm3izQRQkYnavX+LpjKpynKs7sMpN/RLxIJOuXaaM5zqHZHxwzE63iTZxaI5A==\", \"SigningCertURL\" : \"https://sns.eu-west-1.amazonaws.com/SimpleNotificationService-b95095beb82e8f6a046b3aafc7f4149a.pem\" }";
-        SubscriptionConfirmation subscription = deserializer.getSubscriptionFromString(jsonSubscription);
-        System.out.println(subscription);
+        BaseSNS baseSNS = deserializer.getGenericSNSMessage(jsonSubscription, "SubscriptionConfirmation");
+        Assert.assertTrue(baseSNS instanceof SubscriptionConfirmation);
+        SubscriptionConfirmation subscription = (SubscriptionConfirmation) baseSNS;
         Assert.assertEquals("SubscriptionConfirmation", subscription.getType());
         Assert.assertEquals("https://sns.eu-west-1.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:eu-west-1:374647430309:komoot-challenge-notifications&Token=2336412f37fb687f5d51e6e241d44a2dc0dc1be77f70e0f7808517b9078d0de38fe0df916b101b6373c920912128b416703290f03cef4e206858e3edf52ca829cef08bf4d451ca8b88df3bd322ac73eebbddf5fbdc65b4640fdb8ddb82b4fed72bbf9d16da43b361ab801ac56fce011c5aa5d663359f53baff7242adf26087ceec7e999e7fd4cda7548b75e7c992b555", subscription.getSubscribeURL());
 

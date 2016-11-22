@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 public class SNSMessageDeserializer {
@@ -25,16 +26,16 @@ public class SNSMessageDeserializer {
         this.mapper = mapper;
     }
 
-    public BaseSNS getGenericSNSMessage(String message){
-        try {
-            return mapper.readValue(message, BaseSNS.class);
-        } catch (IOException e) {
-            logger.error("Error unmarskalling message: " + message, e);
-            throw new NotificationException( "Error unmarskalling message: " + message, ErrorResponse.Error.UNMARSHALLING);
+    public BaseSNS getGenericSNSMessage(String message, String messageType){
+        if(Objects.equals(messageType, "SubscriptionConfirmation")){
+            return getSubscriptionFromString(message);
+        }else if(Objects.equals(messageType, "Notification")) {
+            return getNotificationFromString(message);
         }
+        return null;
     }
 
-    public SubscriptionConfirmation getSubscriptionFromString(String message){
+    private SubscriptionConfirmation getSubscriptionFromString(String message){
         try {
             return mapper.readValue(message, SubscriptionConfirmation.class);
         } catch (IOException e) {
@@ -43,7 +44,7 @@ public class SNSMessageDeserializer {
         }
     }
 
-    public Notification getNotificationFromString(String message){
+    private Notification getNotificationFromString(String message){
         try {
             return mapper.readValue(message, Notification.class);
         } catch (IOException e) {
