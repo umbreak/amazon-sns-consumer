@@ -48,7 +48,7 @@ public class NotificationController {
         BaseSNS snsMessage = deserializer.getGenericSNSMessage(message, messageType);
 
 
-        checkValidMessage(snsMessage);
+        checkValidMessage(snsMessage, message);
 
         //Ignore not notification messages
         if(snsMessage instanceof SubscriptionConfirmation){
@@ -59,13 +59,13 @@ public class NotificationController {
         return ResponseEntity.ok(null);
     }
 
-    private void checkValidMessage(BaseSNS snsMessage){
+    private void checkValidMessage(BaseSNS snsMessage, String originalMessage){
         if(!Objects.equals(snsMessage.getSignatureVersion(), "1"))
             throw new NotificationException("Wrong version signature" , ErrorResponse.Error.WRONG_SIGNATURE);
         if(verifySignature){
             logger.info("Verify signature");
             try {
-                if(!snsMessage.isMessageSignatureValid())
+                if(!snsMessage.isMessageSignatureValid(originalMessage))
                     wrongSignature(null);
             } catch (Exception e) {
                 wrongSignature(e);

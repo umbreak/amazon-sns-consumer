@@ -35,41 +35,4 @@ public class Notification extends BaseSNS{
         this.setTimestamp(new Date());
         this.setSignatureVersion("1");
     }
-
-    @JsonIgnore
-    public String buildNotificationStringToSign() {
-        String stringToSign = null;
-
-        //Build the string to sign from the values in the message.
-        //Name and values separated by newline characters
-        //The name value pairs are sorted by name
-        //in byte sort order.
-        stringToSign = "Message\n";
-        stringToSign += getMessage() + "\n";
-        stringToSign += "MessageId\n";
-        stringToSign += getMessageId() + "\n";
-        if (getSubject() != null) {
-            stringToSign += "Subject\n";
-            stringToSign += getSubject() + "\n";
-        }
-        if(email != null){
-            stringToSign += "email\n";
-            stringToSign += getEmail() + "\n";
-        }
-        if(name != null){
-            stringToSign += "name\n";
-            stringToSign += getName() + "\n";
-        }
-        if(defaultMessage != null){
-            stringToSign += "default\n";
-            stringToSign += getDefaultMessage() + "\n";
-        }
-        stringToSign += "Timestamp\n";
-        stringToSign += getTimestamp() + "\n";
-        stringToSign += "TopicArn\n";
-        stringToSign += getTopicArn() + "\n";
-        stringToSign += "Type\n";
-        stringToSign += getType() + "\n";
-        return stringToSign;
-    }
 }

@@ -1,5 +1,6 @@
 package komoot.notification.model.sns;
 
+import com.amazonaws.services.sns.util.SignatureChecker;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -43,28 +44,14 @@ public class BaseSNS {
     String signature;
 
     @JsonIgnore
-    public boolean isMessageSignatureValid() throws Exception{
+    public boolean isMessageSignatureValid(String message) throws Exception{
+        SignatureChecker signatureChecker = new SignatureChecker();
         URL url = new URL(getSigningCertURL());
         InputStream inStream = url.openStream();
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate)cf.generateCertificate(inStream);
         inStream.close();
+        return signatureChecker.verifySignature(message, getSignature(), cert.getPublicKey());
 
-        Signature sig = Signature.getInstance("SHA1withRSA");
-        sig.initVerify(cert.getPublicKey());
-        sig.update(getMessageBytesToSign());
-        return sig.verify(Base64.decodeBase64(getSignature()));
-    }
-
-    @JsonIgnore
-    private byte [] getMessageBytesToSign () {
-        String stringToSign = null;
-        if (this instanceof Notification)
-            stringToSign = ((Notification) this).buildNotificationStringToSign();
-        else if (this instanceof SubscriptionConfirmation)
-            stringToSign = ((SubscriptionConfirmation) this).buildNotificationStringToSign();
-        else
-            return null;
-        return stringToSign.getBytes();
     }
 }
