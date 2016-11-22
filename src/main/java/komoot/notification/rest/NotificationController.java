@@ -59,7 +59,7 @@ public class NotificationController {
     }
 
     private void checkValidMessage(BaseSNS snsMessage){
-        if(!snsMessage.getSignatureVersion().equals("1"))
+        if(!Objects.equals(snsMessage.getSignatureVersion(), "1"))
             throw new NotificationException("Wrong version signature" , ErrorResponse.Error.WRONG_SIGNATURE);
         if(verifySignature){
             logger.info("Verify signature");
