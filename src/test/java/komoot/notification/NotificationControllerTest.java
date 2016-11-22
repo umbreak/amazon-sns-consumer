@@ -133,7 +133,7 @@ public class NotificationControllerTest {
         mockMvc.perform(post("/notification")
                 .header("x-amz-sns-message-type", "Notification")
                 .contentType(contentType)
-                .content(json(notification)).with(user("user1").password("secret1")))
+                .content(json(notification)))
                 .andExpect(status().isOk());
     }
 
@@ -145,7 +145,7 @@ public class NotificationControllerTest {
         Notification notification = new Notification(email, name, message);
         mockMvc.perform(post("/notification")
                 .contentType(contentType)
-                .content(json(notification)).with(user("user1").password("secret1")))
+                .content(json(notification)))
                 .andExpect(status().isBadRequest());
     }
 
