@@ -4,7 +4,7 @@ import komoot.notification.jpa.NotificationDAO;
 import komoot.notification.jpa.NotificationEntity;
 import komoot.notification.jpa.SubscriberDAO;
 import komoot.notification.jpa.SubscriberEntity;
-import komoot.notification.model.Notification;
+import komoot.notification.model.sns.Notification;
 import komoot.notification.model.sns.SubscriptionConfirmation;
 import komoot.notification.rest.SNSMessageDeserializer;
 import komoot.notification.rest.cron.schedule.NotificationSummaryCron;

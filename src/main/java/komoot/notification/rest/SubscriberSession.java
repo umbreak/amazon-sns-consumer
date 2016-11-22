@@ -2,7 +2,7 @@ package komoot.notification.rest;
 
 import komoot.notification.jpa.SubscriberDAO;
 import komoot.notification.jpa.SubscriberEntity;
-import komoot.notification.model.Notification;
+import komoot.notification.model.sns.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

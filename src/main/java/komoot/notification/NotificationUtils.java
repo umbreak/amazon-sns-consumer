@@ -1,6 +1,9 @@
 package komoot.notification;
 
 
+import komoot.notification.model.sns.Notification;
+import komoot.notification.model.sns.BaseSNS;
+import komoot.notification.model.sns.SubscriptionConfirmation;
 import org.apache.tika.io.IOUtils;
 
 import java.io.IOException;
@@ -8,7 +11,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class URLUtils {
+public class NotificationUtils {
     public static String getStringFromUrl(String urlString) throws IOException {
         URL url = new URL(urlString);
         URLConnection con = url.openConnection();

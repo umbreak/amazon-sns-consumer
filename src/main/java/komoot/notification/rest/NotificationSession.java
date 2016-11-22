@@ -3,11 +3,9 @@ package komoot.notification.rest;
 import komoot.notification.jpa.NotificationDAO;
 import komoot.notification.jpa.NotificationEntity;
 import komoot.notification.jpa.SubscriberEntity;
-import komoot.notification.model.Notification;
+import komoot.notification.model.sns.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class NotificationSession {
