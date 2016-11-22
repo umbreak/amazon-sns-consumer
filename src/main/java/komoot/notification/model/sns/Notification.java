@@ -35,10 +35,9 @@ public class Notification extends BaseSNS{
         this.setTimestamp(new Date());
         this.setSignatureVersion("1");
     }
-
     @JsonIgnore
     public Map<String, String> buildNotificationStringToSign() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SSS'Z");
         Map<String, String> result = new HashMap<>();
         result.put("Message", getMessage());
         result.put("MessageId", getMessageId());
@@ -49,6 +48,7 @@ public class Notification extends BaseSNS{
         result.put("Signature",signature);
         result.put("SignatureVersion", getSignatureVersion());
         result.put("Timestamp", formatter.format(getTimestamp()));
+        System.out.println("Timestamp===" + formatter.format(getTimestamp()));
         result.put("TopicArn", getTopicArn());
         result.put("Type", getType());
         return result;
