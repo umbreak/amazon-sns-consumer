@@ -15,6 +15,9 @@ public class Notification extends BaseSNS{
 
     private String email;
 
+    @JsonProperty("default")
+    private String defaultMessage;
+
     @JsonProperty("Subject")
     private String subject;
 
@@ -48,6 +51,18 @@ public class Notification extends BaseSNS{
         if (getSubject() != null) {
             stringToSign += "Subject\n";
             stringToSign += getSubject() + "\n";
+        }
+        if(email != null){
+            stringToSign += "email\n";
+            stringToSign += getEmail() + "\n";
+        }
+        if(name != null){
+            stringToSign += "name\n";
+            stringToSign += getName() + "\n";
+        }
+        if(defaultMessage != null){
+            stringToSign += "default\n";
+            stringToSign += getDefaultMessage() + "\n";
         }
         stringToSign += "Timestamp\n";
         stringToSign += getTimestamp() + "\n";
