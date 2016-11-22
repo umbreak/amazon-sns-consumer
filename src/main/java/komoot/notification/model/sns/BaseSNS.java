@@ -4,6 +4,7 @@ import com.amazonaws.services.sns.util.SignatureChecker;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.mail.util.BASE64DecoderStream;
 import komoot.notification.NotificationUtils;
 import lombok.Data;
 import lombok.ToString;
@@ -14,12 +15,21 @@ import java.net.URL;
 import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 
 @Data
 @ToString
 public class BaseSNS {
+
+    @JsonIgnore
+    private static final SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    static{
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
     @JsonProperty("SigningCertURL")
     String signingCertURL;
 
@@ -32,7 +42,7 @@ public class BaseSNS {
     @JsonProperty("Type")
     String type;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Europe/Berlin")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "GMT")
     Date Timestamp;
 
     @JsonProperty("TopicArn")
@@ -43,6 +53,7 @@ public class BaseSNS {
 
     @JsonProperty("Signature")
     String signature;
+
 
     @JsonIgnore
     public boolean isMessageSignatureValid() throws Exception{
@@ -62,5 +73,10 @@ public class BaseSNS {
         else if (this instanceof SubscriptionConfirmation)
             return ((SubscriptionConfirmation) this).buildNotificationStringToSign();
         return null;
+    }
+
+    @JsonIgnore
+    public String getTimestampString(){
+        return formatter.format(getTimestamp());
     }
 }

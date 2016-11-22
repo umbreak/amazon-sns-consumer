@@ -141,6 +141,7 @@ public class NotificationControllerTest {
         Assert.assertTrue(baseSNS instanceof SubscriptionConfirmation);
         SubscriptionConfirmation subscription = (SubscriptionConfirmation) baseSNS;
         Assert.assertEquals("SubscriptionConfirmation", subscription.getType());
+        Assert.assertEquals("2016-11-22T20:11:44.050Z", subscription.getTimestampString());
         Assert.assertEquals("https://sns.eu-west-1.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:eu-west-1:374647430309:komoot-challenge-notifications&Token=2336412f37fb687f5d51e6e241d44a2dc0dc1be77f70e0f7808517b9078d0de38fe0df916b101b6373c920912128b416703290f03cef4e206858e3edf52ca829cef08bf4d451ca8b88df3bd322ac73eebbddf5fbdc65b4640fdb8ddb82b4fed72bbf9d16da43b361ab801ac56fce011c5aa5d663359f53baff7242adf26087ceec7e999e7fd4cda7548b75e7c992b555", subscription.getSubscribeURL());
 
     }
