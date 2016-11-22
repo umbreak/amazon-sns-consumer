@@ -21,7 +21,7 @@ public class SubscriptionConfirmation extends BaseSNS{
 
     @JsonIgnore
     public Map<String, String> buildNotificationStringToSign() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SSS'Z");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         Map<String, String> result = new HashMap<>();
         result.put("Message", getMessage());
         result.put("MessageId", getMessageId());

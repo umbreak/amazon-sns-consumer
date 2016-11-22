@@ -32,7 +32,7 @@ public class BaseSNS {
     @JsonProperty("Type")
     String type;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSS'Z", timezone = "Europe/Berlin")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Europe/Berlin")
     Date Timestamp;
 
     @JsonProperty("TopicArn")
