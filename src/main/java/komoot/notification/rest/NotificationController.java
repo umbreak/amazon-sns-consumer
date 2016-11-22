@@ -41,16 +41,24 @@ public class NotificationController {
             @RequestHeader(value="x-amz-sns-message-type") String messageType,
             @RequestBody String message) {
 
-        logger.info("Message type==" + messageType);
+        logger.info("Message type==" + messageType + " message==" + message);
         //Ignore not notification messages
-        if(!Objects.equals(messageType, "Notification")) return ResponseEntity.ok(null);
+        if(Objects.equals(messageType, "SubscriptionConfirmation")){
+            handleSunscription(message);
+        }else if(Objects.equals(messageType, "Notification")) {
+            handleNotification(message);
+        }
+        return ResponseEntity.ok(null);
+    }
 
+
+    private void handleSunscription(String message){
+    }
+
+    private void handleNotification(String message){
         Notification notification = getNotificationFromString(message);
         SubscriberEntity subscriber = subscriberSession.createOrGetSubscriber(notification);
         notificationSession.storeNotificationForSubscriber(notification, subscriber);
-
-        return ResponseEntity.ok(null);
-
     }
 
     private Notification getNotificationFromString(String message){
