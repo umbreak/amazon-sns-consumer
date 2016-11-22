@@ -54,7 +54,7 @@ public class EmailSender {
     }
 
     private String salutation(SubscriberEntity subscriber){
-        String name = subscriber == null ? "Anonymous" : subscriber.getName();
+        String name = (subscriber == null || subscriber.getName() == null) ? "Anonymous" : subscriber.getName();
         return emailSalutation.replace("{0}", name);
     }
 
