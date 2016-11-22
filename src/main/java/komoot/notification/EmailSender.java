@@ -40,7 +40,7 @@ public class EmailSender {
     }
 
     public void sendEmail(SubscriberEntity subscriber, List<NotificationEntity> notifications) throws AddressException {
-        String salutation = emailSalutation.replace("{0}", subscriber.getName());
+        String salutation = salutation(subscriber);
         String text = buildText(salutation, notifications);
         final Email email = EmailImpl.builder()
                 .from(new InternetAddress(emailFrom))
@@ -51,6 +51,11 @@ public class EmailSender {
                 .encoding(Charset.forName("UTF-8")).build();
 
         emailService.send(email);
+    }
+
+    private String salutation(SubscriberEntity subscriber){
+        String name = subscriber == null ? "Anonymous" : subscriber.getName();
+        return emailSalutation.replace("{0}", name);
     }
 
     private String buildText(String salutation, List<NotificationEntity> notifications){

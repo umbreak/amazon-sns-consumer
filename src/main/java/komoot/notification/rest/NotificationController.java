@@ -63,7 +63,6 @@ public class NotificationController {
         if(!Objects.equals(snsMessage.getSignatureVersion(), "1"))
             throw new NotificationException("Wrong version signature" , ErrorResponse.Error.WRONG_SIGNATURE);
         if(verifySignature){
-            logger.info("Verify signature");
             try {
                 if(!snsMessage.isMessageSignatureValid())
                     wrongSignature(null);
@@ -82,8 +81,6 @@ public class NotificationController {
 
     private void handleSunscription(BaseSNS message){
         SubscriptionConfirmation subscription = (SubscriptionConfirmation)message;
-        logger.info("message==" + subscription);
-
         try {
             NotificationUtils.getStringFromUrl(subscription.getSubscribeURL());
         } catch (IOException e) {
@@ -95,8 +92,6 @@ public class NotificationController {
 
     private void handleNotification(BaseSNS message){
         Notification notification = (Notification)message;
-        logger.info("message==" + notification);
-
         SubscriberEntity subscriber = subscriberSession.createOrGetSubscriber(notification);
         notificationSession.storeNotificationForSubscriber(notification, subscriber);
     }
