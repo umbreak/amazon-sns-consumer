@@ -40,17 +40,24 @@ public class Notification extends BaseSNS{
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         Map<String, String> result = new HashMap<>();
         result.put("Message", getMessage());
+        System.out.println("Message=" + getMessage());
         result.put("MessageId", getMessageId());
+        System.out.println("MessageId=" + getMessageId());
         if(subject != null){
             result.put("Subject", subject);
         }
         result.put("UnsubscribeURL", unsubscribeURL);
+        System.out.println("UnsubscribeURL=" + unsubscribeURL);
         result.put("Signature",signature);
+        System.out.println("signature=" + signature);
         result.put("SignatureVersion", getSignatureVersion());
+        System.out.println("SignatureVersion=" + getSignatureVersion() );
         result.put("Timestamp", formatter.format(getTimestamp()));
         System.out.println("Timestamp===" + formatter.format(getTimestamp()));
         result.put("TopicArn", getTopicArn());
+        System.out.println("TopicArn=" + getTopicArn());
         result.put("Type", getType());
+        System.out.println("Type=" + getType());
         return result;
     }
 }
