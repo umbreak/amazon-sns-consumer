@@ -1,12 +1,10 @@
 package komoot.notification.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import komoot.notification.jpa.NotificationDAO;
-import komoot.notification.jpa.SubscriberDAO;
+import komoot.notification.URLUtils;
 import komoot.notification.jpa.SubscriberEntity;
 import komoot.notification.model.ErrorResponse;
 import komoot.notification.model.Notification;
-import komoot.notification.rest.cron.schedule.NotificationSummaryCron;
+import komoot.notification.model.sns.SubscriptionConfirmation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +23,13 @@ public class NotificationController {
 
     private final SubscriberSession subscriberSession;
     private final NotificationSession notificationSession;
-    private final ObjectMapper mapper;
+    private final SNSMessageDeserializer deserializer;
 
     @Autowired
-    public NotificationController(SubscriberSession subscriberSession, NotificationSession notificationSession, ObjectMapper mapper) {
+    public NotificationController(SubscriberSession subscriberSession, NotificationSession notificationSession, SNSMessageDeserializer deserializer) {
         this.subscriberSession = subscriberSession;
         this.notificationSession = notificationSession;
-        this.mapper = mapper;
+        this.deserializer = deserializer;
     }
 
 
@@ -42,6 +40,7 @@ public class NotificationController {
             @RequestBody String message) {
 
         logger.info("Message type==" + messageType + " message==" + message);
+
         //Ignore not notification messages
         if(Objects.equals(messageType, "SubscriptionConfirmation")){
             handleSunscription(message);
@@ -53,20 +52,20 @@ public class NotificationController {
 
 
     private void handleSunscription(String message){
+        SubscriptionConfirmation subscription = deserializer.getSubscriptionFromString(message);
+        try {
+            URLUtils.getStringFromUrl(subscription.getSubscribeURL());
+        } catch (IOException e) {
+            logger.error("Error fetching URL: " + subscription.getSubscribeURL(), e);
+            throw new NotificationException("Error fetching URL: " + subscription.getSubscribeURL(), ErrorResponse.Error.SUBSCRIBING_PROCESS);
+        }
+
     }
 
     private void handleNotification(String message){
-        Notification notification = getNotificationFromString(message);
+        Notification notification = deserializer.getNotificationFromString(message);
         SubscriberEntity subscriber = subscriberSession.createOrGetSubscriber(notification);
         notificationSession.storeNotificationForSubscriber(notification, subscriber);
     }
 
-    private Notification getNotificationFromString(String message){
-        try {
-            return mapper.readValue(message, Notification.class);
-        } catch (IOException e) {
-            logger.error("Error unmarskalling message: " + message, e);
-            throw new NotificationException( "Error unmarskalling message: " + message, ErrorResponse.Error.UNMARSHALLING);
-        }
-    }
 }

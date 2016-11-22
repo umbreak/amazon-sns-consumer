@@ -9,7 +9,7 @@ public class ErrorResponse {
     private String message;
 
     public static enum Error{
-        NOT_DEFINED, UNMARSHALLING
+        NOT_DEFINED, UNMARSHALLING, SUBSCRIBING_PROCESS
     }
 
     public ErrorResponse() {
