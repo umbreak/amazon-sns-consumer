@@ -2,10 +2,12 @@ package komoot.notification.model.sns;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 
 @Data
+@ToString
 public class SubscriptionConfirmation {
     private String Type;
     private String MessageId;
