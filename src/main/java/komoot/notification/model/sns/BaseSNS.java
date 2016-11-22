@@ -51,6 +51,7 @@ public class BaseSNS {
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate)cf.generateCertificate(inStream);
         inStream.close();
+        System.out.println("Message==" + message + " signature==" + getSignature() + " public key==" + cert.getPublicKey());
         return signatureChecker.verifySignature(message, getSignature(), cert.getPublicKey());
 
     }
