@@ -65,7 +65,7 @@ public class NotificationController {
         if(verifySignature){
             logger.info("Verify signature");
             try {
-                if(!snsMessage.isMessageSignatureValid(originalMessage))
+                if(!snsMessage.isMessageSignatureValid())
                     wrongSignature(null);
             } catch (Exception e) {
                 wrongSignature(e);

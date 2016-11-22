@@ -15,6 +15,7 @@ import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Map;
 
 @Data
 @ToString
@@ -44,15 +45,22 @@ public class BaseSNS {
     String signature;
 
     @JsonIgnore
-    public boolean isMessageSignatureValid(String message) throws Exception{
+    public boolean isMessageSignatureValid() throws Exception{
         SignatureChecker signatureChecker = new SignatureChecker();
         URL url = new URL(getSigningCertURL());
         InputStream inStream = url.openStream();
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate)cf.generateCertificate(inStream);
         inStream.close();
-        System.out.println("Message==" + message + " signature==" + getSignature() + " public key==" + cert.getPublicKey());
-        return signatureChecker.verifySignature(message, getSignature(), cert.getPublicKey());
+        return signatureChecker.verifySignature(getMessageBytesToSign(), cert.getPublicKey());
+    }
 
+    @JsonIgnore
+    private Map<String,String> getMessageBytesToSign () {
+        if (this instanceof Notification)
+            return ((Notification) this).buildNotificationStringToSign();
+        else if (this instanceof SubscriptionConfirmation)
+            return ((SubscriptionConfirmation) this).buildNotificationStringToSign();
+        return null;
     }
 }
