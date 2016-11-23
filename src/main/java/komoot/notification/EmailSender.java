@@ -26,6 +26,9 @@ public class EmailSender {
     @Autowired @Value("${emailFrom}")
     private String emailFrom;
 
+    @Autowired @Value("${emailFromName}")
+    private String emailFromName;
+
     @Autowired @Value("${emailTo}")
     private String emailTo;
 
@@ -43,7 +46,7 @@ public class EmailSender {
         String salutation = salutation(subscriber);
         String text = buildText(salutation, notifications);
         final Email email = EmailImpl.builder()
-                .from(new InternetAddress(emailFrom))
+                .from(new InternetAddress(emailFrom, emailFromName))
                 .replyTo(new InternetAddress(emailFrom))
                 .to(Lists.newArrayList(new InternetAddress(emailTo)))
                 .subject(salutation)
