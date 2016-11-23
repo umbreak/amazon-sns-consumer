@@ -3,9 +3,12 @@ package komoot.notification.rest;
 import komoot.notification.jpa.NotificationDAO;
 import komoot.notification.jpa.NotificationEntity;
 import komoot.notification.jpa.SubscriberEntity;
+import komoot.notification.model.sns.CustomMessage;
 import komoot.notification.model.sns.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Component
 public class NotificationSession {
@@ -17,8 +20,8 @@ public class NotificationSession {
         this.notificationDAO = notificationDAO;
     }
 
-    NotificationEntity storeNotificationForSubscriber(Notification notification, SubscriberEntity subscriber){
-        NotificationEntity notificationEntity = new NotificationEntity(notification, subscriber);
+    NotificationEntity storeNotificationForSubscriber(CustomMessage customMessage, SubscriberEntity subscriber){
+        NotificationEntity notificationEntity = new NotificationEntity(customMessage, subscriber);
         notificationDAO.save(notificationEntity);
         return notificationEntity;
     }

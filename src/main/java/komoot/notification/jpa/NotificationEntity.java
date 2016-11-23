@@ -1,4 +1,5 @@
 package komoot.notification.jpa;
+import komoot.notification.model.sns.CustomMessage;
 import komoot.notification.model.sns.Notification;
 import lombok.Data;
 
@@ -26,16 +27,16 @@ public class NotificationEntity {
 
     public NotificationEntity() {}
 
-    public NotificationEntity(Notification notification, SubscriberEntity subscriber){
-        message = notification.getMessage();
-        timestamp = notification.getTimestamp();
+    public NotificationEntity(CustomMessage customMessage, SubscriberEntity subscriber){
+        message = customMessage.getMessage();
+        timestamp = customMessage.getTimestamp();
         owner = subscriber;
         status = Status.NOT_SENT;
         statusDate = new Date();
     }
 
     public enum Status{
-        NOT_SENT, SENDING, SENT
+        NOT_SENT, SENT
     }
 
 }

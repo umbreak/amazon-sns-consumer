@@ -31,28 +31,29 @@ public class BaseSNS {
     }
 
     @JsonProperty("SigningCertURL")
-    String signingCertURL;
+    private String signingCertURL;
 
     @JsonProperty("MessageId")
-    String messageId;
+    private String messageId;
 
     @JsonProperty("Message")
-    String message;
+    private String message;
 
     @JsonProperty("Type")
-    String type;
+    private String type;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "GMT")
-    Date Timestamp;
+    @JsonProperty("Timestamp")
+    private Date timestamp;
 
     @JsonProperty("TopicArn")
-    String topicArn;
+    private String topicArn;
 
     @JsonProperty("SignatureVersion")
     private String signatureVersion;
 
     @JsonProperty("Signature")
-    String signature;
+    private String signature;
 
 
     @JsonIgnore
@@ -76,7 +77,7 @@ public class BaseSNS {
     }
 
     @JsonIgnore
-    public String getTimestampString(){
+    public String getTimestampIntoString(){
         return formatter.format(getTimestamp());
     }
 }

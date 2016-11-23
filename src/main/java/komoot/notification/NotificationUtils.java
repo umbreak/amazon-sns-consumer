@@ -1,9 +1,6 @@
 package komoot.notification;
 
 
-import komoot.notification.model.sns.Notification;
-import komoot.notification.model.sns.BaseSNS;
-import komoot.notification.model.sns.SubscriptionConfirmation;
 import org.apache.tika.io.IOUtils;
 
 import java.io.IOException;

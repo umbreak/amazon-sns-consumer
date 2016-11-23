@@ -1,13 +1,18 @@
 package komoot.notification.model.sns;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import komoot.notification.model.sns.BaseSNS;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import komoot.notification.model.ErrorResponse;
+import komoot.notification.rest.NotificationController;
+import komoot.notification.rest.NotificationException;
 import lombok.Data;
 import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +21,8 @@ import java.util.Map;
 @Data
 public class Notification extends BaseSNS{
 
-    private String email;
+    @JsonIgnore
+    private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
     @JsonProperty("Subject")
     private String subject;
@@ -24,17 +30,18 @@ public class Notification extends BaseSNS{
     @JsonProperty("UnsubscribeURL")
     private String unsubscribeURL;
 
-    private String name;
+    @JsonIgnore
+    private CustomMessage customMessage;
 
     public Notification() {}
 
-    public Notification(String email, String name, String message) {
-        this.email = email;
-        this.name = name;
-        this.message = message;
+    public Notification(CustomMessage message) throws JsonProcessingException {
+        customMessage = message;
+        this.setMessage(new ObjectMapper().writeValueAsString(customMessage));
         this.setTimestamp(new Date());
         this.setSignatureVersion("1");
     }
+
     @JsonIgnore
     public Map<String, String> buildNotificationStringToSign() {
         Map<String, String> result = new HashMap<>();
@@ -44,11 +51,23 @@ public class Notification extends BaseSNS{
             result.put("Subject", subject);
         }
         result.put("UnsubscribeURL", unsubscribeURL);
-        result.put("Signature",signature);
+        result.put("Signature",getSignature());
         result.put("SignatureVersion", getSignatureVersion());
-        result.put("Timestamp", (getTimestampString()));
+        result.put("Timestamp", (getTimestampIntoString()));
         result.put("TopicArn", getTopicArn());
         result.put("Type", getType());
         return result;
+    }
+
+    @JsonIgnore
+    public CustomMessage getCustomMessage() {
+        if(customMessage != null) return customMessage;
+        try {
+            customMessage = new ObjectMapper().readValue(getMessage(), CustomMessage.class);
+            return customMessage;
+        } catch (IOException e) {
+            logger.error("Error unmarshalling custom message " + getMessage(), e);
+            throw new NotificationException("Error unmarshalling custom message " + getMessage(), ErrorResponse.Error.UNMARSHALLING);
+        }
     }
 }

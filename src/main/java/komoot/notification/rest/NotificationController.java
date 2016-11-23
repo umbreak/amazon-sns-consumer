@@ -3,8 +3,9 @@ package komoot.notification.rest;
 import komoot.notification.NotificationUtils;
 import komoot.notification.jpa.SubscriberEntity;
 import komoot.notification.model.ErrorResponse;
-import komoot.notification.model.sns.Notification;
 import komoot.notification.model.sns.BaseSNS;
+import komoot.notification.model.sns.CustomMessage;
+import komoot.notification.model.sns.Notification;
 import komoot.notification.model.sns.SubscriptionConfirmation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,8 +93,8 @@ public class NotificationController {
 
     private void handleNotification(BaseSNS message){
         Notification notification = (Notification)message;
-        SubscriberEntity subscriber = subscriberSession.createOrGetSubscriber(notification);
-        notificationSession.storeNotificationForSubscriber(notification, subscriber);
+        CustomMessage customMessage = notification.getCustomMessage();
+        SubscriberEntity subscriber = subscriberSession.createOrGetSubscriber(customMessage);
+        notificationSession.storeNotificationForSubscriber(customMessage, subscriber);
     }
-
 }

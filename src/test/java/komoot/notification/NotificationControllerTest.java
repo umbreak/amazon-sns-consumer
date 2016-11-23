@@ -5,6 +5,7 @@ import komoot.notification.jpa.NotificationEntity;
 import komoot.notification.jpa.SubscriberDAO;
 import komoot.notification.jpa.SubscriberEntity;
 import komoot.notification.model.sns.BaseSNS;
+import komoot.notification.model.sns.CustomMessage;
 import komoot.notification.model.sns.Notification;
 import komoot.notification.model.sns.SubscriptionConfirmation;
 import komoot.notification.rest.SNSMessageDeserializer;
@@ -83,7 +84,8 @@ public class NotificationControllerTest {
     @Test
     @Transactional
     public void testPostNotification() throws Exception {
-        Notification notification = new Notification("aaa@example.com", "Didac", "This is a message sent by Merkel");
+        CustomMessage customMessage = new CustomMessage("aaa@example.com", "Didac", "This is a message sent by Merkel");
+        Notification notification = new Notification(customMessage);
         sendNotification(notification);
         checkDBConsistency(notification);
     }
@@ -92,11 +94,11 @@ public class NotificationControllerTest {
     @Transactional
     public void testPostNotifications() throws Exception {
         List<Notification> notifications = Arrays.asList(
-                new Notification("aaa@example.com", "Didac", "Hey, do you fanc partying tonight"),
-                new Notification("aaa@example.com", "Didac", "YOLO!"),
-                new Notification("bbb@example.com", "Mike", "I would like to have a beer"),
-                new Notification("ccc@example.com", "Stephan", "No beer before 4 8english version sucks)"),
-                new Notification("aaa@example.com", "Didac", "End of sadness == end of winter")
+                new Notification(new CustomMessage("aaa@example.com", "Didac", "Hey, do you fanc partying tonight")),
+                new Notification(new CustomMessage("aaa@example.com", "Didac", "YOLO!")),
+                new Notification(new CustomMessage("bbb@example.com", "Mike", "I would like to have a beer")),
+                new Notification(new CustomMessage("ccc@example.com", "Stephan", "No beer before 4 8english version sucks)")),
+                new Notification(new CustomMessage("aaa@example.com", "Didac", "End of sadness == end of winter"))
         );
         for (Notification notification : notifications) {
             sendNotification(notification);
@@ -141,7 +143,7 @@ public class NotificationControllerTest {
         Assert.assertTrue(baseSNS instanceof SubscriptionConfirmation);
         SubscriptionConfirmation subscription = (SubscriptionConfirmation) baseSNS;
         Assert.assertEquals("SubscriptionConfirmation", subscription.getType());
-        Assert.assertEquals("2016-11-22T20:11:44.050Z", subscription.getTimestampString());
+        Assert.assertEquals("2016-11-22T20:11:44.050Z", subscription.getTimestampIntoString());
         Assert.assertEquals("https://sns.eu-west-1.amazonaws.com/?Action=ConfirmSubscription&TopicArn=arn:aws:sns:eu-west-1:374647430309:komoot-challenge-notifications&Token=2336412f37fb687f5d51e6e241d44a2dc0dc1be77f70e0f7808517b9078d0de38fe0df916b101b6373c920912128b416703290f03cef4e206858e3edf52ca829cef08bf4d451ca8b88df3bd322ac73eebbddf5fbdc65b4640fdb8ddb82b4fed72bbf9d16da43b361ab801ac56fce011c5aa5d663359f53baff7242adf26087ceec7e999e7fd4cda7548b75e7c992b555", subscription.getSubscribeURL());
 
     }
@@ -159,7 +161,7 @@ public class NotificationControllerTest {
         String email = "aaa@example.com";
         String name = "Didac";
         String message = "This is a message sent by Merkel";
-        Notification notification = new Notification(email, name, message);
+        Notification notification = new Notification(new CustomMessage(email, name, message));
         mockMvc.perform(post("/notification")
                 .contentType(contentType)
                 .content(json(notification)))
@@ -177,26 +179,26 @@ public class NotificationControllerTest {
     }
 
 
-    private void checkDBConsistency(Notification notification){
+    private void checkDBConsistency(Notification notification) {
         SubscriberEntity subscriberEntity = checkBDSubscription(notification);
         checkDBNotification(notification, subscriberEntity);
     }
 
-    private void checkDBNotification(Notification notification, SubscriberEntity subscriptor){
-        List<NotificationEntity> listNotification = notificationDAO.findByStatusAndOwnerEmail(NotificationEntity.Status.NOT_SENT, notification.getEmail());
-        Optional<NotificationEntity> dbNotificationOption = listNotification.stream().filter(not -> not.getMessage().equals(notification.getMessage())).findFirst();
+    private void checkDBNotification(Notification notification, SubscriberEntity subscriptor) {
+        List<NotificationEntity> listNotification = notificationDAO.findByStatusAndOwnerEmail(NotificationEntity.Status.NOT_SENT, notification.getCustomMessage().getEmail());
+        Optional<NotificationEntity> dbNotificationOption = listNotification.stream().filter(not -> not.getMessage().equals(notification.getCustomMessage().getMessage())).findFirst();
         Assert.assertTrue(dbNotificationOption.isPresent());
         NotificationEntity dbNotification = dbNotificationOption.get();
-        Assert.assertEquals(notification.getMessage(), dbNotification.getMessage());
+        Assert.assertEquals(notification.getCustomMessage().getMessage(), dbNotification.getMessage());
         Assert.assertEquals(subscriptor.getId(), dbNotification.getOwner().getId());
     }
 
-    private SubscriberEntity checkBDSubscription(Notification notification){
-        Optional<SubscriberEntity> subscriptionOption = subscriberDAO.findByEmail(notification.getEmail());
+    private SubscriberEntity checkBDSubscription(Notification notification) {
+        Optional<SubscriberEntity> subscriptionOption = subscriberDAO.findByEmail(notification.getCustomMessage().getEmail());
         Assert.assertTrue(subscriptionOption.isPresent());
 
         SubscriberEntity subscriberEntity = subscriptionOption.get();
-        Assert.assertEquals(notification.getName(), subscriberEntity.getName());
+        Assert.assertEquals(notification.getCustomMessage().getName(), subscriberEntity.getName());
         return subscriberEntity;
     }
 

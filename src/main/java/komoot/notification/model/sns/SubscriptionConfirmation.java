@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.ToString;
 
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,9 +25,9 @@ public class SubscriptionConfirmation extends BaseSNS{
         result.put("MessageId", getMessageId());
         result.put("SubscribeURL", getSubscribeURL());
         result.put("SubscribeURL", subscribeURL);
-        result.put("Signature",signature);
+        result.put("Signature",getSignature());
         result.put("SignatureVersion", getSignatureVersion());
-        result.put("Timestamp", getTimestampString());
+        result.put("Timestamp", getTimestampIntoString());
         result.put("Token", getToken());
         result.put("TopicArn", getTopicArn());
         result.put("Type", getType());
