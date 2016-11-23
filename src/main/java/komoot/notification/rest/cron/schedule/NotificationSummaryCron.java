@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.internet.AddressException;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -60,7 +61,7 @@ public class NotificationSummaryCron {
         try {
             mailSender.sendEmail(subscriber, notifications);
             return true;
-        } catch (AddressException e) {
+        } catch (AddressException | UnsupportedEncodingException e) {
             logger.error("Failed sending notifications: " + notifications + " to subscriber: " + subscriber, e);
             return false;
         }

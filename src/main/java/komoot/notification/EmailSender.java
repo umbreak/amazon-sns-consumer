@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -42,7 +43,7 @@ public class EmailSender {
         this.formatter = new SimpleDateFormat("EEEE, HH:mm", Locale.ENGLISH);
     }
 
-    public void sendEmail(SubscriberEntity subscriber, List<NotificationEntity> notifications) throws AddressException {
+    public void sendEmail(SubscriberEntity subscriber, List<NotificationEntity> notifications) throws AddressException, UnsupportedEncodingException {
         String salutation = salutation(subscriber);
         String text = buildText(salutation, notifications);
         final Email email = EmailImpl.builder()
