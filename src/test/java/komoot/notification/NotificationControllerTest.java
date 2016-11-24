@@ -84,7 +84,7 @@ public class NotificationControllerTest {
     @Test
     @Transactional
     public void testPostNotification() throws Exception {
-        CustomMessage customMessage = new CustomMessage("aaa@example.com", "Didac", "This is a message sent by Merkel");
+        CustomMessage customMessage = new CustomMessage("didac.montero.mendez@gmail.com", "Didac", "This is a message sent by Merkel");
         Notification notification = new Notification(customMessage);
         sendNotification(notification);
         checkDBConsistency(notification);
@@ -94,11 +94,11 @@ public class NotificationControllerTest {
     @Transactional
     public void testPostNotifications() throws Exception {
         List<Notification> notifications = Arrays.asList(
-                new Notification(new CustomMessage("aaa@example.com", "Didac", "Hey, do you fanc partying tonight")),
-                new Notification(new CustomMessage("aaa@example.com", "Didac", "YOLO!")),
-                new Notification(new CustomMessage("bbb@example.com", "Mike", "I would like to have a beer")),
-                new Notification(new CustomMessage("ccc@example.com", "Stephan", "No beer before 4 8english version sucks)")),
-                new Notification(new CustomMessage("aaa@example.com", "Didac", "End of sadness == end of winter"))
+                new Notification(new CustomMessage("didac.montero.mendez@gmail.com", "Didac", "Hey, do you fanc partying tonight")),
+                new Notification(new CustomMessage("didac.montero.mendez@gmail.com", "Didac", "YOLO!")),
+                new Notification(new CustomMessage("umbreak@gmail.com", "Mike", "I would like to have a beer")),
+                new Notification(new CustomMessage("epsc2008@gmail.com", "Stephan", "No beer before 4 8english version sucks)")),
+                new Notification(new CustomMessage("didac.montero.mendez@gmail.com", "Didac", "End of sadness == end of winter"))
         );
         for (Notification notification : notifications) {
             sendNotification(notification);
@@ -158,7 +158,7 @@ public class NotificationControllerTest {
 
     @Test
     public void testPostNotificationWithoutHeader() throws Exception {
-        String email = "aaa@example.com";
+        String email = "didac.montero.mendez@gmail.com";
         String name = "Didac";
         String message = "This is a message sent by Merkel";
         Notification notification = new Notification(new CustomMessage(email, name, message));

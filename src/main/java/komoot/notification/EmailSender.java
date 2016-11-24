@@ -30,9 +30,6 @@ public class EmailSender {
     @Autowired @Value("${emailFromName}")
     private String emailFromName;
 
-    @Autowired @Value("${emailTo}")
-    private String emailTo;
-
     @Autowired @Value("${emailSalutation}")
     private String emailSalutation;
 
@@ -49,7 +46,7 @@ public class EmailSender {
         final Email email = EmailImpl.builder()
                 .from(new InternetAddress(emailFrom, emailFromName))
                 .replyTo(new InternetAddress(emailFrom))
-                .to(Lists.newArrayList(new InternetAddress(emailTo)))
+                .to(Lists.newArrayList(new InternetAddress(subscriber.getEmail())))
                 .subject(salutation)
                 .body(text)
                 .encoding(Charset.forName("UTF-8")).build();
